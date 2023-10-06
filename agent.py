@@ -6,6 +6,9 @@ from game import SnakeGameAI, Direction, Point
 from model import Linear_QNet, QTrainer
 from helper import plot
 
+'''
+CONSTANTS
+'''
 MAX_MEMORY = 100_000
 BATCH_SIZE = 1000
 LR = 0.001
@@ -13,6 +16,11 @@ LR = 0.001
 class Agent:
     
     def __init__(self):
+        """
+        Initializes the Agent.
+
+        This constructor sets up the agent's parameters, Q-network, and memory.
+        """
         self.number_of_games = 0
         self.epsilon = 0 #randomness
         self.gamma = 0.8
@@ -23,6 +31,15 @@ class Agent:
         #TODO model, trainer
 
     def get_state(self, game):
+        """
+        Computes the state of the game based on the current game state.
+
+        Parameters:
+        - game (SnakeGameAI): The current game instance.
+
+        Returns:
+        - np.ndarray: An array representing the game state.
+        """
         head = game.snake[0]
         point_l = Point(head.x - 20, head.y)
         point_r = Point(head.x + 20, head.y)
@@ -69,9 +86,22 @@ class Agent:
         return np.array(state, dtype=int)
 
     def remember(self, state, action, reward, next_state, done):
+        """
+        Stores an experience tuple in the agent's memory.
+
+        Parameters:
+        - state: The current state.
+        - action: The action taken.
+        - reward: The received reward.
+        - next_state: The next state.
+        - done (bool): Indicates whether the episode is done.
+        """
         self.memory.append((state, action, reward, next_state, done)) # popleft is the maxMemory is reached
 
     def train_long_memory(self):
+        """
+        Performs a training step on the Q-network using experiences stored in the long-term memory.
+        """
         if len(self.memory) > BATCH_SIZE:
             mini_sample = random.sample(self.memory, BATCH_SIZE) # list of tuples
         else:
@@ -81,9 +111,28 @@ class Agent:
         self.trainer.train_step(states, actions, rewards, next_states, dones)
 
     def train_short_memory(self, state, action, reward, next_state, done):
+        """
+        Performs a training step on the Q-network using a single experience tuple.
+
+        Parameters:
+        - state: The current state.
+        - action: The action taken.
+        - reward: The received reward.
+        - next_state: The next state.
+        - done (bool): Indicates whether the episode is done.
+        """
         self.trainer.train_step(state, action, reward, next_state, done)
 
     def get_action(self, state):
+        """
+        Determines the agent's action based on the current state.
+
+        Parameters:
+        - state: The current state.
+
+        Returns:
+        - list: A list representing the action to take.
+        """
         # random moves: tradeoff exploration / exploitation
         self.epsilon = 80 - self.number_of_games
         final_move = [0, 0, 0]
@@ -100,6 +149,11 @@ class Agent:
 
 
 def train():
+    """
+    The training loop for the agent.
+
+    This function initializes the agent, the game, and runs the training loop.
+    """
     plot_scores = []
     plot_mean_scores = []
     total_score = 0

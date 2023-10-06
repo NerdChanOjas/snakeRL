@@ -33,8 +33,18 @@ BLOCK_SIZE = 20
 SPEED = 50
 
 class SnakeGameAI:
+    '''
+    This class represents the Snake game and provides methods for controlling the game and interacting with it.
+    '''
     
     def __init__(self, w=640, h=480):
+        """
+        Initializes the SnakeGameAI.
+
+        Parameters:
+        - w (int): The width of the game window (default: 640).
+        - h (int): The height of the game window (default: 480).
+        """
         self.w = w
         self.h = h
         # init display
@@ -44,6 +54,9 @@ class SnakeGameAI:
         self.reset()
 
     def reset(self):
+        """
+        Resets the game to its initial state, including the snake's position, direction, and score.
+        """
         self.direction = Direction.RIGHT
         
         self.head = Point(self.w/2, self.h/2)
@@ -57,6 +70,11 @@ class SnakeGameAI:
         self.frame_iteration = 0
         
     def _place_food(self):
+        """
+        Places food randomly on the game grid and ensures it does not overlap with the snake's body.
+
+        This method is called to position the food within the game grid.
+        """
         x = random.randint(0, (self.w-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE 
         y = random.randint(0, (self.h-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
         self.food = Point(x, y)
@@ -64,6 +82,17 @@ class SnakeGameAI:
             self._place_food()
         
     def play_step(self, action):
+        """
+        Performs a single step of the game based on the specified action.
+
+        Parameters:
+        - action (list): A list representing the action to take in the game.
+
+        Returns:
+        - reward (int): The reward obtained in this step.
+        - game_over (bool): Indicates whether the game is over (True) or not (False).
+        - score (int): The current score of the game.
+        """
         self.frame_iteration += 1
         # 1. collect user input
         for event in pygame.event.get():
@@ -99,6 +128,15 @@ class SnakeGameAI:
         return reward, game_over, self.score
     
     def is_collision(self, pt=None):
+        """
+        Checks if a collision has occurred in the game.
+
+        Parameters:
+        - pt (Point): The point to check for collision (default: None, checks the snake's head).
+
+        Returns:
+        - bool: True if a collision has occurred, False otherwise.
+        """
         if pt is None:
             pt = self.head
         # hits boundary
@@ -111,6 +149,9 @@ class SnakeGameAI:
         return False 
         
     def _update_ui(self):
+        """
+        Updates the game's user interface, including the display of the snake, food, and score.
+        """
         self.display.fill(BLACK)
         
         for pt in self.snake:
@@ -124,6 +165,12 @@ class SnakeGameAI:
         pygame.display.flip()
         
     def _move(self, action):
+        """
+        Moves the snake based on the specified action.
+
+        Parameters:
+        - action (list): A list representing the action to take in the game.
+        """
         # [straight, right, left]
 
         clock_wise = [Direction.RIGHT, Direction.DOWN, Direction.LEFT, Direction.UP]

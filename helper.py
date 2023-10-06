@@ -4,6 +4,13 @@ from IPython import display
 plt.ion()
 
 def plot(scores, mean_scores):
+    """
+    Plots the scores and mean scores during the training process.
+
+    Parameters:
+    - scores (list): A list of individual game scores.
+    - mean_scores (list): A list of mean scores over multiple games.
+    """
     display.clear_output(wait=True)
     display.display(plt.gcf())
     plt.clf()
